@@ -7,15 +7,14 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderSetup;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
+import me.x150.renderer.mixin.RenderLayerAccessor;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.OptionalDouble;
 import java.util.function.Function;
-
-import static net.minecraft.client.render.RenderPhase.*;
 
 /**
  * Custom or extended RenderLayers
@@ -51,19 +50,15 @@ public class CustomRenderLayers {
 	 *     </tr>
 	 * </table>
 	 */
-	public static final RenderLayer POS_COL_QUADS_NO_DEPTH_TEST = RenderLayer.of(
+	public static final RenderLayer POS_COL_QUADS_NO_DEPTH_TEST = RenderLayerAccessor.callOf(
 			"renderer/always_depth_pos_color",
-			1024,
-			false, true,
-			RenderPipelines.register(RenderPipeline.builder(RenderPipelines.POSITION_COLOR_SNIPPET)
-						.withLocation(Identifier.of("renderer", "pipeline/pos_col_quads_nodepth"))
-						.withCull(true)
-						.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-						.withDepthWrite(true)
-						.build()
-			),
-			RenderLayer.MultiPhaseParameters.builder()
-					.build(false)
+			RenderSetup.builder(RenderPipelines.register(RenderPipeline.builder(RenderPipelines.POSITION_COLOR_SNIPPET)
+					.withLocation(Identifier.of("renderer", "pipeline/pos_col_quads_nodepth"))
+					.withCull(true)
+					.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+					.withDepthWrite(true)
+					.build()
+			)).expectedBufferSize(1024).build()
 	);
 	/**
 	 * Position, color quads, with depth test set to GL_LEQUAL (default)
@@ -81,19 +76,15 @@ public class CustomRenderLayers {
 	 *     </tr>
 	 * </table>
 	 */
-	public static final RenderLayer POS_COL_QUADS_WITH_DEPTH_TEST = RenderLayer.of(
+	public static final RenderLayer POS_COL_QUADS_WITH_DEPTH_TEST = RenderLayerAccessor.callOf(
 			"renderer/lequal_depth_pos_color",
-			1024,
-			false, true,
-			RenderPipelines.register(RenderPipeline.builder(RenderPipelines.POSITION_COLOR_SNIPPET)
-						.withLocation(Identifier.of("renderer", "pipeline/pos_col_quads_depth"))
-						.withCull(true)
-						.withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
-						.withDepthWrite(true)
-						.build()
-			),
-			RenderLayer.MultiPhaseParameters.builder()
-					.build(false)
+			RenderSetup.builder(RenderPipelines.register(RenderPipeline.builder(RenderPipelines.POSITION_COLOR_SNIPPET)
+					.withLocation(Identifier.of("renderer", "pipeline/pos_col_quads_depth"))
+					.withCull(true)
+					.withDepthTestFunction(DepthTestFunction.LEQUAL_DEPTH_TEST)
+					.withDepthWrite(true)
+					.build()
+			)).expectedBufferSize(1024).build()
 	);
 
 
@@ -101,7 +92,7 @@ public class CustomRenderLayers {
 			.withLocation(Identifier.of("renderer", "pipeline/lines_nodepth"))
 			.withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
 			.withDepthWrite(true)
-			.withVertexFormat(VertexFormats.POSITION_COLOR_NORMAL, VertexFormat.DrawMode.LINES)
+			.withVertexFormat(VertexFormats.POSITION_COLOR_NORMAL_LINE_WIDTH, VertexFormat.DrawMode.LINES)
 
 			.build()
 	);
@@ -115,19 +106,15 @@ public class CustomRenderLayers {
 	 *         <th>Pipeline</th>
 	 *     </tr>
 	 *     <tr>
-	 *         <td>{@link VertexFormats#POSITION_COLOR_NORMAL}</td>
+	 *         <td>{@link VertexFormats#POSITION_COLOR_NORMAL_LINE_WIDTH}</td>
 	 *         <td>{@link com.mojang.blaze3d.vertex.VertexFormat.DrawMode#LINES}</td>
 	 *         <td>{@link #LINES_NODEPTH_PIPELINE}</td>
 	 *     </tr>
 	 * </table>
 	 */
-	public static final Function<Double, RenderLayer> LINES_NO_DEPTH_TEST = Util.memoize(width -> RenderLayer.of(
+	public static final Function<Double, RenderLayer> LINES_NO_DEPTH_TEST = Util.memoize(width -> RenderLayerAccessor.callOf(
 			"renderer/always_depth_lines",
-			1024,
-			false, true, LINES_NODEPTH_PIPELINE,
-			RenderLayer.MultiPhaseParameters.builder()
-					.lineWidth(new LineWidth(width == 0d ? OptionalDouble.empty() : OptionalDouble.of(width)))
-					.build(false)
+			RenderSetup.builder(LINES_NODEPTH_PIPELINE).expectedBufferSize(1024).build()
 	));
 
 	/**
@@ -135,7 +122,7 @@ public class CustomRenderLayers {
 	 */
 	public static final RenderPipeline LINES_DEPTH_PIPELINE = RenderPipelines.register(RenderPipeline.builder(RenderPipelines.RENDERTYPE_LINES_SNIPPET)
 			.withLocation(Identifier.of("renderer", "pipeline/lines_depth"))
-			.withVertexFormat(VertexFormats.POSITION_COLOR_NORMAL, VertexFormat.DrawMode.LINES)
+			.withVertexFormat(VertexFormats.POSITION_COLOR_NORMAL_LINE_WIDTH, VertexFormat.DrawMode.LINES)
 			.build()
 	);
 	/**
@@ -148,19 +135,15 @@ public class CustomRenderLayers {
 	 *         <th>Pipeline</th>
 	 *     </tr>
 	 *     <tr>
-	 *         <td>{@link VertexFormats#POSITION_COLOR_NORMAL}</td>
+	 *         <td>{@link VertexFormats#POSITION_COLOR_NORMAL_LINE_WIDTH}</td>
 	 *         <td>{@link com.mojang.blaze3d.vertex.VertexFormat.DrawMode#LINES}</td>
 	 *         <td>{@link #LINES_DEPTH_PIPELINE}</td>
 	 *     </tr>
 	 * </table>
 	 */
-	public static final Function<Double, RenderLayer> LINES = Util.memoize(width -> RenderLayer.of(
+	public static final Function<Double, RenderLayer> LINES = Util.memoize(width -> RenderLayerAccessor.callOf(
 			"renderer/lines",
-			1024,
-			false, true, LINES_DEPTH_PIPELINE,
-			RenderLayer.MultiPhaseParameters.builder()
-					.lineWidth(new LineWidth(width == 0d ? OptionalDouble.empty() : OptionalDouble.of(width)))
-					.build(false)
+			RenderSetup.builder(LINES_DEPTH_PIPELINE).expectedBufferSize(1024).build()
 	));
 
 	/**

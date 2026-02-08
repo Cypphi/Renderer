@@ -138,4 +138,11 @@ public class DirectVertexConsumer implements VertexConsumer {
 		into.put(floatToByte(z));
 		return this;
 	}
+
+	@Override
+	public VertexConsumer lineWidth(float width) {
+		checkEnd();
+		into.putFloat(width);
+		return this;
+	}
 }

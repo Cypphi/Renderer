@@ -38,7 +38,7 @@ public record WorldRenderContext(Camera camera, VertexConsumerProvider vcp) {
 	public void drawFilledQuad(MatrixStack stack, RenderLayer layer, Vec3d position, float w, float h, Color color) {
 		VertexConsumer buffer = vcp.getBuffer(layer);
 		MatrixStack.Entry transform = stack.peek();
-		Vector3f transformedRoot = position.subtract(camera.getPos()).toVector3f();
+		Vector3f transformedRoot = position.subtract(camera.getCameraPos()).toVector3f();
 		float x = transformedRoot.x;
 		float y = transformedRoot.y;
 		float z = transformedRoot.z;
@@ -68,7 +68,7 @@ public record WorldRenderContext(Camera camera, VertexConsumerProvider vcp) {
 	public void drawFilledCube(MatrixStack stack, RenderLayer layer, Vec3d position, float w, float h, float d, Color color) {
 		VertexConsumer buffer = vcp.getBuffer(layer);
 		MatrixStack.Entry transform = stack.peek();
-		Vector3f transformedRoot = position.subtract(camera.getPos()).toVector3f();
+		Vector3f transformedRoot = position.subtract(camera.getCameraPos()).toVector3f();
 		float x = transformedRoot.x;
 		float y = transformedRoot.y;
 		float z = transformedRoot.z;
@@ -98,10 +98,23 @@ public record WorldRenderContext(Camera camera, VertexConsumerProvider vcp) {
 	 * @param color Color
 	 */
 	public void drawLine(MatrixStack stack, RenderLayer layer, Vec3d start, Vec3d end, Color color) {
+		drawLine(stack, layer, start, end, 1.0f, color);
+	}
+
+	/**
+	 * Draws a solid line in the world
+	 * @param stack Transformation MatrixStack including camera rotation
+	 * @param layer RenderLayer. Should be result of {@link CustomRenderLayers#getLines(float, boolean)} or custom if you know what you're doing
+	 * @param start Starting position
+	 * @param end End position
+	 * @param width Line width
+	 * @param color Color
+	 */
+	public void drawLine(MatrixStack stack, RenderLayer layer, Vec3d start, Vec3d end, float width, Color color) {
 		VertexConsumer buffer = vcp.getBuffer(layer);
 		MatrixStack.Entry transform = stack.peek();
-		Vector3f tfStart = start.subtract(camera.getPos()).toVector3f();
-		Vector3f tfEnd = end.subtract(camera.getPos()).toVector3f();
+		Vector3f tfStart = start.subtract(camera.getCameraPos()).toVector3f();
+		Vector3f tfEnd = end.subtract(camera.getCameraPos()).toVector3f();
 		Vector3f direction = tfEnd.sub(tfStart, new Vector3f()).normalize();
 		float x1 = tfStart.x;
 		float y1 = tfStart.y;
@@ -114,9 +127,9 @@ public record WorldRenderContext(Camera camera, VertexConsumerProvider vcp) {
 		float b = color.blue();
 		float a = color.alpha();
 		//@formatter:off
-		Emitter._emit_line__2xposition_color_normal(transform.getPositionMatrix(), transform.getNormalMatrix(), buffer,
-				x1, y1, z1, r, g, b, a, direction.x, direction.y, direction.z,
-				x2, y2, z2, r, g, b, a, direction.x, direction.y, direction.z);
+		Emitter._emit_line__2xposition_color_normal_lineWidth(transform.getPositionMatrix(), transform.getNormalMatrix(), buffer,
+				x1, y1, z1, r, g, b, a, direction.x, direction.y, direction.z, width,
+				x2, y2, z2, r, g, b, a, direction.x, direction.y, direction.z, width);
 		//@formatter:on
 	}
 }

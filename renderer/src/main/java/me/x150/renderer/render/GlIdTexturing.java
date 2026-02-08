@@ -3,17 +3,21 @@ package me.x150.renderer.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import net.minecraft.client.render.RenderPhase;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.util.Identifier;
 
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * RenderLayer texturing based on an existing GpuTexture
+ * Helper for registering a {@link GpuTextureView} as a texture that can be referenced
+ * by {@link net.minecraft.client.render.RenderSetup.Builder#texture}.
  */
-public class GlIdTexturing extends RenderPhase.TextureBase {
+public class GlIdTexturing {
+	private static final AtomicInteger NEXT_ID = new AtomicInteger();
 
 	private final GpuTextureView glTex;
+	private final Identifier id;
 
 	/**
 	 * Constructor.
@@ -21,22 +25,41 @@ public class GlIdTexturing extends RenderPhase.TextureBase {
 	 * @param linear Bilinear sampling? NEAREST otherwise
 	 */
 	public GlIdTexturing(GpuTextureView glId, boolean linear) {
-		super(() -> {
-			FilterMode filter = linear ? FilterMode.LINEAR : FilterMode.NEAREST;
-			glId.texture().setTextureFilter(filter, filter, false);
-			RenderSystem.setShaderTexture(0, glId);
-		}, () -> {
-		});
 		this.glTex = glId;
+		this.id = Identifier.of("renderer", "gpu/" + NEXT_ID.incrementAndGet());
+		MinecraftClient.getInstance().getTextureManager().registerTexture(this.id, new ExternalTexture(glId, linear));
+	}
+
+	/**
+	 * @return Identifier registered for this texture.
+	 */
+	public Identifier getId() {
+		return id;
+	}
+
+	/**
+	 * @return Underlying texture view.
+	 */
+	public GpuTextureView getTextureView() {
+		return glTex;
 	}
 
 	@Override
 	public String toString() {
-		return this.name + "[" + this.glTex + "]";
+		return "GlIdTexturing[" + this.id + "]";
 	}
 
-	@Override
-	protected Optional<Identifier> getId() {
-		return Optional.empty(); // cant produce Identifier for this glId so we're just gonna have to live with it
+	private static final class ExternalTexture extends AbstractTexture {
+		private ExternalTexture(GpuTextureView view, boolean linear) {
+			this.glTextureView = view;
+			this.glTexture = view.texture();
+			FilterMode filter = linear ? FilterMode.LINEAR : FilterMode.NEAREST;
+			this.sampler = RenderSystem.getSamplerCache().get(filter);
+		}
+
+		@Override
+		public void close() {
+			// no-op: we do not own the underlying GPU texture
+		}
 	}
 }

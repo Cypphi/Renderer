@@ -6,7 +6,7 @@ import net.minecraft.client.render.RenderLayer;
 import java.util.function.Consumer;
 
 /**
- * A duck interface for {@link RenderLayer.MultiPhase}, allowing to specify a custom action to apply to the {@link RenderPass} before drawing.
+ * A duck interface for {@link RenderLayer}, allowing to specify a custom action to apply to the {@link RenderPass} before drawing.
  */
 public interface MoreMultiPhase {
 	/**
@@ -14,14 +14,14 @@ public interface MoreMultiPhase {
 	 * @param rp Action to apply
 	 * @return this
 	 */
-	RenderLayer.MultiPhase withRenderPassSetup(Consumer<RenderPass> rp);
+	RenderLayer withRenderPassSetup(Consumer<RenderPass> rp);
 
 	/**
-	 * Helper function to hide the ugly cast since {@link RenderLayer.MultiPhase} is final
-	 * @param mp MultiPhase to convert
-	 * @return MoreMultiPhase for the given MultiPhase
+	 * Helper function to hide the ugly cast.
+	 * @param layer RenderLayer to convert
+	 * @return MoreMultiPhase for the given RenderLayer
 	 */
-	static MoreMultiPhase moreOptions(RenderLayer.MultiPhase mp) {
-		return ((MoreMultiPhase) (Object) mp);
+	static MoreMultiPhase moreOptions(RenderLayer layer) {
+		return ((MoreMultiPhase) (Object) layer);
 	}
 }

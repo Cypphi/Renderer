@@ -29,7 +29,7 @@
 	},
 	"line": {
 		"elements": [
-			"position", "color", "normal"
+			"position", "color", "normal", "lineWidth"
 		],
 		"nFaces": 1,
 		"nVerticesInFace": 2,

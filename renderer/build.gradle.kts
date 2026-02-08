@@ -4,7 +4,12 @@ plugins {
     id("eu.kakde.gradle.sonatype-maven-central-publisher") version "1.0.6"
 }
 
-apply(from = file("deploying/secrets.gradle.kts"))
+val secretsFile = file("deploying/secrets.gradle.kts")
+if (secretsFile.exists()) {
+    apply(from = secretsFile)
+} else {
+    logger.lifecycle("Skipping secrets.gradle.kts; not found at ${secretsFile.path}")
+}
 
 version = rootProject.properties["mod_version"]!!
 group = rootProject.properties["maven_group"]!!
