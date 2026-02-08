@@ -14,6 +14,7 @@
 		"InGameHudMixin",
 		"MinecraftClientMixin",
 		"MultiPhaseMixin",
+		"RenderLayerAccessor",
 		"NativeImageAccessor",
 		"PostEffectPassAccessor",
 		"PostEffectProcessorAccessor"

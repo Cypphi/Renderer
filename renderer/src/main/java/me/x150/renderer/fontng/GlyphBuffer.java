@@ -1,6 +1,8 @@
 package me.x150.renderer.fontng;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -171,7 +173,12 @@ public class GlyphBuffer {
 			GlyphPage page = glyphPageListEntry.getKey();
 			GpuTextureView glId = page.tex.getGlTextureView();
 //			context.fill((int) ((minX + offsetX) * sf), (int) ((minY + offsetY) * sf), (int) (((minX + offsetX) * sf) + (maxX - minX) * sf), (int) (((minY + offsetY) * sf) + (maxY - minY) * sf), 0xFFFF00FF);
-			SimpleGuiElementRenderState state = new SimpleGuiRenderState(CustomRenderLayers.PIPELINE_TEXT_CUSTOM, TextureSetup.of(glId), context, theBounds, (buffer) -> {
+			SimpleGuiElementRenderState state = new SimpleGuiRenderState(
+					CustomRenderLayers.PIPELINE_TEXT_CUSTOM,
+					TextureSetup.withLightmap(glId, RenderSystem.getSamplerCache().get(FilterMode.LINEAR)),
+					context,
+					theBounds,
+					(buffer) -> {
 				for (Glyph glyph : glyphPageListEntry.getValue()) {
 					float glyphBaselineX = (glyph.x + offsetX) * sf;
 					float glyphBaselineY = (glyph.y + offsetY) * sf;
@@ -214,7 +221,7 @@ public class GlyphBuffer {
 							.vertex(tTR.x, tTR.y,0).color(actualColor).texture((glyphX + wid - 0.01f) / w, (glyphY + 0.01f) / h)		.light(0xf000f0);
 					//@formatter:on
 				}
-			});
+					});
 			((DrawContextAccessor) context).getState().addSimpleElement(state);
 		}
 

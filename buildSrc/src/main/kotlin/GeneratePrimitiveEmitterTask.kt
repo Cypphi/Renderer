@@ -25,7 +25,8 @@ private val vec3fLabels = arrayOf("x", "y", "z")
 enum class VertexType(val count: Int, val type: TypeName, val consName: String, val hasTransform: Boolean, vararg val labels: String) {
     position(3, TypeName.FLOAT, "vertex", true, "x", "y", "z"),
     color(4, TypeName.FLOAT, "color", false, "r", "g", "b", "a"),
-    normal(3, TypeName.FLOAT, "normal", true, "nx", "ny", "nz")
+    normal(3, TypeName.FLOAT, "normal", true, "nx", "ny", "nz"),
+    lineWidth(1, TypeName.FLOAT, "lineWidth", false, "width")
 }
 
 abstract class GeneratePrimitiveEmitterTask : DefaultTask() {
@@ -100,6 +101,7 @@ abstract class GeneratePrimitiveEmitterTask : DefaultTask() {
                     VertexType.position -> transformingBuilder.add("positionTransform.transformPosition(")
                     VertexType.normal -> transformingBuilder.add("normalTransform.transform(")
                     VertexType.color -> error("shouldnt happen")
+                    VertexType.lineWidth -> error("shouldnt happen")
                 }
                 for(j in 0 until it.count) {
                     val argName = "v${i}_${it.name}_${it.labels[j]}"

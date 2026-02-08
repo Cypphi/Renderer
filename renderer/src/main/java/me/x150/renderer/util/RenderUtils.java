@@ -170,7 +170,7 @@ public class RenderUtils {
 		float f3 = -MathHelper.cos(pitchRad);
 		float f4 = MathHelper.sin(pitchRad);
 
-		return new Vec3d(f2 * f3, f4, f1 * f3).add(camera.getPos());
+		return new Vec3d(f2 * f3, f4, f1 * f3).add(camera.getCameraPos());
 	}
 
 	/**
@@ -197,9 +197,9 @@ public class RenderUtils {
 		int displayHeight = client.getWindow().getHeight();
 		Vector3f target = new Vector3f();
 
-		double deltaX = pos.x - camera.getPos().x;
-		double deltaY = pos.y - camera.getPos().y;
-		double deltaZ = pos.z - camera.getPos().z;
+		double deltaX = pos.x - camera.getCameraPos().x;
+		double deltaY = pos.y - camera.getCameraPos().y;
+		double deltaZ = pos.z - camera.getCameraPos().z;
 
 		Vector4f transformedCoordinates = new Vector4f((float) deltaX, (float) deltaY, (float) deltaZ, 1.f).mul(lastWorldSpaceMatrix);
 
@@ -249,7 +249,7 @@ public class RenderUtils {
 
 		matrixProj.mul(matrixModel).mul(lastWorldSpaceMatrix).unproject((float) x / displayWidth * lastViewport[2], (float) (displayHeight - y) / displayHeight * lastViewport[3], (float) d, lastViewport, target);
 
-		return new Vec3d(target.x, target.y, target.z).add(camera.getPos());
+		return new Vec3d(target.x, target.y, target.z).add(camera.getCameraPos());
 	}
 
 	/**

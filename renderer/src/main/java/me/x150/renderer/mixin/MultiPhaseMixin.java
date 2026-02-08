@@ -13,14 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Consumer;
 
-@Mixin(RenderLayer.MultiPhase.class)
+@Mixin(RenderLayer.class)
 public class MultiPhaseMixin implements MoreMultiPhase {
 	@Unique
 	private Consumer<RenderPass> renderPassSetup;
 	@Override
-	public RenderLayer.MultiPhase withRenderPassSetup(Consumer<RenderPass> rp) {
+	public RenderLayer withRenderPassSetup(Consumer<RenderPass> rp) {
 		this.renderPassSetup = rp;
-		return ((RenderLayer.MultiPhase) (Object) this);
+		return ((RenderLayer) (Object) this);
 	}
 
 	@Inject(method="draw",at= @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderPass;drawIndexed(IIII)V"))

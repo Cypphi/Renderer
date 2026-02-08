@@ -10,7 +10,7 @@ import me.x150.renderer.render.WorldRenderContext;
 import me.x150.renderer.util.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.util.math.MatrixStack;
@@ -127,9 +127,9 @@ public class Handler {
 		WorldRenderContext rc = new WorldRenderContext(MinecraftClient.getInstance(), vcp);
 		rc.drawFilledCube(stack, CustomRenderLayers.POS_COL_QUADS_WITH_DEPTH_TEST, new Vec3d(100, 100, 100), 1, 1, 1, new Color(0xAAFFFFFF));
 		rc.drawFilledCube(stack, CustomRenderLayers.POS_COL_QUADS_NO_DEPTH_TEST, new Vec3d(105, 100, 105), 1, 1, 1, new Color(0xAAFF0000));
-		rc.drawFilledCube(stack, RenderLayer.getDebugLineStrip(1), new Vec3d(110, 100, 105), 1, 1, 1, new Color(0xAAFF0000));
-		rc.drawLine(stack, CustomRenderLayers.LINES_NO_DEPTH_TEST.apply(5d), new Vec3d(100, 100, 100), new Vec3d(105, 100, 105), new Color(0xFF0000FF));
-		rc.drawLine(stack, CustomRenderLayers.LINES_NO_DEPTH_TEST.apply(0d), new Vec3d(100, 101, 100), new Vec3d(105, 101, 105), new Color(0xFF0000FF));
+		rc.drawFilledCube(stack, RenderLayers.debugFilledBox(), new Vec3d(110, 100, 105), 1, 1, 1, new Color(0xAAFF0000));
+		rc.drawLine(stack, CustomRenderLayers.LINES_NO_DEPTH_TEST.apply(5d), new Vec3d(100, 100, 100), new Vec3d(105, 100, 105), 5.0f, new Color(0xFF0000FF));
+		rc.drawLine(stack, CustomRenderLayers.LINES_NO_DEPTH_TEST.apply(0d), new Vec3d(100, 101, 100), new Vec3d(105, 101, 105), 1.0f, new Color(0xFF0000FF));
 
 		vcp.draw();
 	}
