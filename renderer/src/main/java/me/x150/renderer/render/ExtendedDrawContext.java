@@ -4,6 +4,7 @@ import me.x150.renderer.generated.Emitter;
 import me.x150.renderer.mixin.DrawContextAccessor;
 import me.x150.renderer.util.Color;
 import me.x150.renderer.util.DirectVertexConsumer;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.gui.render.state.SimpleGuiElementRenderState;
@@ -134,7 +135,9 @@ dvc.vertex(matrices, x, y, z)						.texture(0, height)	 .texture(width, height).
 					float g = color.green();
 					float b = color.blue();
 					float a = color.alpha();
-					float lineWidth = thickness <= 0.0f ? 1.0f : thickness;
+					float baseWidth = thickness <= 0.0f ? 1.0f : thickness;
+					float scale = (float) MinecraftClient.getInstance().getWindow().getScaleFactor();
+					float lineWidth = baseWidth * scale;
 
 					Vector3f transformedStart = new Vector3f(),
 							transformedEnd = new Vector3f();
